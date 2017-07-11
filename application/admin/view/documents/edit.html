@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="__static__/admin/css/pintuer.css">
+<link rel="stylesheet" href="__static__/admin/css/admin.css">
+<script src="__static__/admin/js/jquery.js"></script>
+<script src="__static__/admin/js/pintuer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel margin-top">
+  <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>修改</strong></div>
+  <div class="body-content">
+    
+    <form method="post" class="form-x" name="form-x" action="" enctype="multipart/form-data" >
+        <input type="hidden" name="id" value="<{$detail['id']}>">
+        <div class="form-group">
+            <div class="label">
+              <label>操作：</label>
+            </div>
+            <div class="field">
+                <div class="button-group"> <a class="button border-green" href="<{:url('Documents/download',array('id'=>$detail['id']))}>"><span class="icon-edit"></span> 下载</a></div>
+            </div>
+        </div>
+      <div class="form-group">
+        <div class="label">
+          <label>标题：</label>
+        </div>
+        <div class="field">
+          <input type="text" class="input w50" name="title" value="<{$detail['title']}>" />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>副标题：</label>
+        </div>
+        <div class="field">
+          <input type="text" class="input w50" name="subtitle" value="<{$detail['subtitle']}>" />
+          <div class="tips"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>分类：</label>
+        </div>
+        <div class="field">
+          <select name="class" class="input w50">
+            <option value="0">请选择分类</option>
+            <{volist name="article_type" id="vo"}>
+                <option value="<{$vo['value']}>" <{if condition="$vo['value'] eq $detail['class']"}>selected<{/if}>><{$vo['name']}></option>
+            <{/volist}>
+          </select>
+          <div class="tips"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>所属部门：</label>
+        </div>
+        <div class="field">
+          <select name="department" class="input w50">
+            <option value="0">请选择部门</option>
+            <{volist name="depart_list" id="vo"}>
+                <option value="<{$vo['id']}>" <{if condition="$vo['id'] eq $detail['department']"}>selected<{/if}>><{$vo['dname']}></option>
+            <{/volist}>
+          </select>
+          <div class="tips"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>文档：</label>
+        </div>
+        <div class="field" style="height:42px;line-height:42px;">
+          <span id="files_img" ><img src='__static__/admin/images/icon_yes.png' style="vertical-align:middle;"></span>
+          <input type="file" style="display:none;" name="files">
+          <input type="button" class="button bg-blue margin-left" id="image1" value="+ 浏览上传" >
+          <script>
+            $("#image1").click(function() {
+                $("input[name='files']").click();
+            });
+            $("input[name='files']").change(function() {
+                $("#files_img").html("<img src='__static__/admin/images/icon_yes.png' style='vertical-align:middle;'>");
+            });
+          </script>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>文章状态：</label>
+        </div>
+        <div class="field">
+          <div class="button-group radio">
+          
+            <{if condition="$detail['status'] eq '1'"}>
+            <label class="button active">
+                <span class="icon icon-check"></span>             
+                <input name="status" value="1" type="radio" checked="checked">启用             
+            </label>
+            <label class="button">
+                <span class="icon icon-times"></span>             
+                <input name="status" value="0" type="radio">禁用          
+            </label>
+            <{else /}>
+            <label class="button">
+                <span class="icon icon-check"></span>             
+                <input name="status" value="1" type="radio">是             
+            </label>
+            <label class="button active">
+                <span class="icon icon-times"></span>             
+                <input name="status" value="1" type="radio" checked="checked">否             
+            </label>
+            <{/if}>
+           </div>       
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>是否公开：</label>
+        </div>
+        <div class="field">
+          <div class="button-group radio">
+          
+            <{if condition="$detail['public'] eq '1'"}>
+            <label class="button active">
+                <span class="icon icon-check"></span>             
+                <input name="public" value="1" type="radio" checked="checked">是             
+            </label>
+            <label class="button">
+                <span class="icon icon-times"></span>             
+                <input name="public" value="0" type="radio">否          
+            </label>
+            <{else /}>
+            <label class="button">
+                <span class="icon icon-check"></span>             
+                <input name="public" value="1" type="radio">是             
+            </label>
+            <label class="button active">
+                <span class="icon icon-times"></span>             
+                <input name="public" value="1" type="radio" checked="checked">否             
+            </label>
+            <{/if}>
+           </div>       
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button class="button bg-main icon-check-square-o tijiao" type="button"> 提交</button>
+        </div>
+      </div>
+    </form>
+<script>
+$(".tijiao").click(function() {
+    if(confirm('确认提交？')) {
+        var err = new Array();
+        var title = $("input[name='title']").val();
+        var subtitle = $("input[name='subtitle']").val();
+        var classs = $("select[name='class']").val();
+        
+        if(title.length <= 0) {
+            err.push('请输入标题');
+        }
+        if(subtitle.length <= 0) {
+            err.push('请输入副标题');
+        }
+        if(classs == '0') {
+            err.push('请选择分类');
+        }
+        if(err.length > 0) {
+            alert(err);return;
+        }
+        $(".form-x").attr('action', "<{:url('Documents/save')}>");
+        $(".form-x").submit();
+    }
+});
+
+</script>
+  </div>
+</div>
+</body></html>

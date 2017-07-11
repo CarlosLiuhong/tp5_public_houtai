@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="renderer" content="webkit">
+        <title></title>
+        <link rel="stylesheet" href="__static__/admin/css/pintuer.css">
+        <link rel="stylesheet" href="__static__/admin/css/admin.css">
+        <link rel="stylesheet" href="__static__/public/css/bootstrap.min.css">
+        <script src="__static__/admin/js/jquery.js"></script>
+        <!--<script src="__static__/admin/js/pintuer.js"></script>-->
+        <script src="__static__/public/js/bootstrap.min.js"></script>
+    </head>
+    <style type="text/css">
+        <!--
+        .search a{
+            text-decoration:none;
+        }
+        -->
+    </style>
+    <body>
+        <div class="panel admin-panel">
+            <div class="panel-head"><strong class="icon-reorder"> Tab列表</strong></div>
+            <div class="padding border-bottom">
+                <ul class="search">
+                    <li>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal"  data-tab_id="" data-menu_id="<{$menu_id}>">添加Tab</button>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal"  data-tab_id="<{$tab_id}>" data-menu_id="<{$menu_id}>">编辑Tab</button>
+                        <button type="button"  class="btn btn-default delete_tab" data-tab_id="<{$tab_id}>" data-menu_id="<{$menu_id}>">删除Tab</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="padding border-bottom">
+                <ul class="search">
+                    <li>
+                        <{volist name="lists" id="vo" empty="<li>暂无数据</li>" }>
+                    <a href="<{:url('MenusTab/lists',array('menu_id'=>$menu_id,'tab_id'=>$vo['tab_id']))}>">
+                        <{if condition="$vo['tab_id'] eq $tab_id"}>
+                        <button type="button" class="btn btn-primary"> <{$vo['tab_name']}></button>
+                        <{else/}>
+                        <button type="button" class="btn btn-default"> <{$vo['tab_name']}> </button>
+                        <{/if}>
+
+                    </a>&nbsp;&nbsp;
+                    <{/volist}>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <{include file="menus_tab/tab_article" /}>
+            </div>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                            <h4 class="modal-title" id="exampleModalLabel"></h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="add_data" method="post">
+                                <input type="hidden" name="menu_id" class="menu_id" value="<{$menu_id}>">
+                                <input type="hidden" name="tab_id" class="tab_id" value="">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Tab名称:</label>
+                                    <input type="text" class="form-control tab_name" name="tab_name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">显示类型:</label>
+                                    <select class="form-control" name="tab_show_type">
+                                        <option value="1">内容页</option>
+                                        <option value="2">列表页</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">内容类型:</label>
+                                    <select class="form-control" name="tab_content_type">
+                                        <option value="1">文章类型</option>
+                                        <option value="2">下载类型</option>
+                                    </select>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">对应表名:</label>
+                                    <select class="form-control" name="tab_tablename">
+                                        <{volist name="table_lists" id="tvo" key="k" empty="" }>
+                                        <option value="<{$tvo[$db_front_html]}>"><{$tvo[$db_front_html]}></option>
+                                        <{/volist}>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message-text" class="control-label">排序:</label>
+                                    <input type="text" class="form-control tab_order" name="tab_order" value="99">
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <p class="hide_tip"></p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary tijiao">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $('#exampleModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var modal = $(this);
+                    modal.find('.modal-title').text('添加Tab标签');
+
+                    var tab_id = button.data('tab_id') // Extract info from data-* attributes
+                    modal.find('.tab_id').val(tab_id);
+
+                    var menu_id = button.data('menu_id') // Extract info from data-* attributes
+                    modal.find('.menu_id').val(menu_id);
+
+                    $("input[name='tab_name']").val('');
+                    $("input[name='tab_order']").val('99');
+
+                    if (parseInt(tab_id) > 0) {
+                        modal.find('.modal-title').text('编辑Tab标签');
+                        $(".add_data").hide();
+                        $(".hide_tip").html("读取中……");
+                        $.ajax({
+                            type: 'POST',
+                            url: "<{:url('AjaxMenusTab/get_detail')}>",
+                            data: {'menu_id': menu_id, 'tab_id': tab_id},
+                            success: function (detail) {
+                                if (detail['code'] > 0) {
+                                    alert(detail['msg']);
+                                    $(".hide_tip").html(detail['msg']);
+                                } else {
+                                    $(".add_data").show();
+                                    $(".hide_tip").html("");
+                                    $("input[name='tab_name']").val(detail['data']['tab_name']);
+                                    $("select[name='tab_tablename']").val(detail['data']['tab_tablename']);
+                                    $("select[name='tab_show_type']").val(detail['data']['tab_show_type']);
+                                    $("select[name='tab_content_type']").val(detail['data']['tab_content_type']);
+                                    $("input[name='tab_order']").val(detail['data']['tab_order']);
+                                }
+                            },
+                            dataType: 'json'
+                        });
+                    } else {
+                        $(".add_data").show();
+                        $(".hide_tip").html("");
+                    }
+
+
+                });
+                $(".tijiao").click(function () {
+                    if (confirm('确认提交？')) {
+                        var tab_name = $("input[name='tab_name']").val();
+                        var tab_tablename = $("select[name='tab_tablename']").val();
+                        var tab_show_type = $("select[name='tab_show_type']").val();
+                        var tab_content_type = $("select[name='tab_content_type']").val();
+                        var tab_order = $("input[name='tab_order']").val();
+                        var err = new Array();
+                        if (tab_name.length <= 0) {
+                            err.push('请输入Tab名称');
+                        }
+
+                        if (tab_tablename.length <= 0) {
+                            err.push('请输入Tab对应表名称');
+                        }
+
+                        if (tab_show_type.length <= 0) {
+                            err.push('请输入Tab显示类型');
+                        }
+                        if (tab_content_type.length <= 0) {
+                            err.push('请输入Tab内容类型');
+                        }
+                        if (tab_order.length <= 0) {
+                            err.push('请输入Tab排序');
+                        }
+                        if (err.length > 0) {
+                            alert(err);
+                            return;
+                        }
+
+                        $(".add_data").attr('action', "<{:url('MenusTab/save')}>");
+                        $(".add_data").submit();
+                    }
+                });
+
+            </script>
+        </div>
+        <script type="text/javascript">
+            $(".delete_tab").click(function () {
+                var menu_id = $(this).data("menu_id");
+                var tab_id = $(this).data("tab_id");
+                if (confirm("您确定要删除当前Tab吗?")) {
+                    window.location.href = "<{:url('MenusTab/sdelete')}>" + "?tab_id=" + tab_id + "&menu_id=" + menu_id;
+                }
+            });
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="__static__/admin/css/pintuer.css">
+<link rel="stylesheet" href="__static__/admin/css/admin.css">
+<script src="__static__/admin/js/jquery.js"></script>
+<script src="__static__/admin/js/pintuer.js"></script>
+<link rel="stylesheet" href="__static__/public/css/bootstrap.min.css">
+<script src="__static__/public/js/bootstrap.min.js"></script>
+</head>
+<!-- KindEditor -->		
+<link rel="stylesheet" href="__static__/admin/js/kindeditor/themes/default/default.css" />
+<link rel="stylesheet" href="__static__/admin/js/kindeditor/plugins/code/prettify.css" />
+<script charset="utf-8" src="__static__/admin/js/kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="__static__/admin/js/kindeditor/lang/zh_CN.js"></script>
+<script charset="utf-8" src="__static__/admin/js/kindeditor/plugins/code/prettify.js"></script>
+<!-- /KindEditor -->	
+<body>
+<div class="panel admin-panel margin-top">
+  <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>编辑</strong></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="" enctype="multipart/form-data" >
+        <input type="hidden" name="<{$pk_name}>" value="<{$detail[$pk_name]}>">
+        <input type="hidden" name="tab_id" value="<{$tab_arr['tab_id']}>">
+        <{volist name="tabfield" id="vo" empty="" }>
+            <{if condition="$vo['tbf_show'] eq '1'"}>
+                <div class="form-group">
+            <{else /}>
+                <div class="form-group hide">
+            <{/if}>
+            
+                <div class="label">
+                    <label><{$vo['tbf_field_name']}>：</label>
+                </div>
+                <div class="field">
+                    <{if condition="$vo['tbf_field_type'] eq 'readonlys'"}>
+                        <{$detail[$vo['tbf_field']]}>
+                    <{elseif condition="$vo['tbf_field_type'] eq 'text'"}>
+                        <input type="<{$vo['tbf_field_type']}>" class="input w50" name="<{$vo['tbf_field']}>" value="<{$detail[$vo['tbf_field']]}>" />
+                    <{elseif condition="$vo['tbf_field_type'] eq 'number'" /}>
+                        <input type="<{$vo['tbf_field_type']}>" class="input w50" name="<{$vo['tbf_field']}>" value="<{$detail[$vo['tbf_field']]}>" />
+                    <{elseif condition="$vo['tbf_field_type'] eq 'radio'" /}>
+                        <?php if(isset($out_table[$vo['tbf_table_in']])) {?>
+                            <{volist name="out_table[$vo['tbf_table_in']]" id="vo1" empty="" }>
+                                <input type="<{$vo['tbf_field_type']}>" name="<{$vo['tbf_field']}>" value="<{$vo1[$vo['tbf_table_in_field']]}>" <{if condition="$detail[$vo['tbf_field']] eq $vo1[$vo['tbf_table_in_field']]"}>checked<{/if}> ><{$vo1[$vo['tbf_table_in_field_show']]}>&nbsp;&nbsp;
+                            <{/volist}>
+                        <?php } else { ?>
+                            <?php foreach($widget_arr[$vo['tbf_field']] as $k1 => $v1) {?>
+                                <input type="<{$vo['tbf_field_type']}>" name="<{$vo['tbf_field']}>" value="<{$k1}>" <{if condition="$detail[$vo['tbf_field']] eq $k1"}>checked<{/if}> ><{$v1}>&nbsp;&nbsp;
+                        <?php } }?>
+                        
+                    <{elseif condition="$vo['tbf_field_type'] eq 'checkbox'" /}>
+                        <?php if(isset($out_table[$vo['tbf_table_in']])) {?>
+                        <{volist name="out_table[$vo['tbf_table_in']]" id="vo1" empty="" }>
+                            <input type="<{$vo['tbf_field_type']}>" name="<{$vo['tbf_field']}>[]" value="<{$vo1[$vo['tbf_table_in_field']]}>"><{$vo1[$vo['tbf_table_in_field_show']]}>&nbsp;&nbsp;
+                        <{/volist}>
+                        <?php } else { ?>
+                            <?php foreach($widget_arr[$vo['tbf_field']] as $k1 => $v1) {?>
+                                <input type="<{$vo['tbf_field_type']}>" name="<{$vo['tbf_field']}>" value="<{$k1}>" <{if condition="$detail[$vo['tbf_field']] eq $k1"}>checked<{/if}> ><{$v1}>&nbsp;&nbsp;
+                        <?php } }?>
+                    <{elseif condition="$vo['tbf_field_type'] eq 'select'" /}>
+                        <select class="form-control tbf_field_type2" style="width:200px;" name="<{$vo['tbf_field']}>">
+                            <option value="">请选择</option>
+                            <?php if(isset($out_table[$vo['tbf_table_in']])) {?>
+                            <{volist name="out_table[$vo['tbf_table_in']]" id="vo1" empty="" }>
+                                <option value="<{$vo1[$vo['tbf_table_in_field']]}>" <{if condition="$vo1[$vo['tbf_table_in_field']] eq $detail[$vo['tbf_field']]"}>selected<{/if}> ><{$vo1[$vo['tbf_table_in_field_show']]}></option>
+                            <{/volist}>
+                            <?php } else { ?>
+                            <?php foreach($widget_arr[$vo['tbf_field']] as $k1 => $v1) {?>
+                                <option value="<{$k1}>" <{if condition="$detail[$vo['tbf_field']] eq $k1"}>selected<{/if}> ><{$v1}>&nbsp;&nbsp;
+                            <?php } }?>
+                        </select>
+                    <{elseif condition="$vo['tbf_field_type'] eq 'textarea'" /}>
+                        <textarea name="<{$vo['tbf_field']}>" style="width:400px;height:200px;"><{$detail[$vo['tbf_field']]}></textarea>
+                    <{elseif condition="$vo['tbf_field_type'] eq 'image'" /}>
+                        <{if condition="$detail[$vo['tbf_field']] neq ''"}>
+                            <img src="<{$detail[$vo['tbf_field']]}>" class="show_one_img" style="width:100px;">
+                        <{/if}>
+                        &nbsp;&nbsp;<input type="file" style="display:none;" name="<{$vo['tbf_field']}>" class="input_one_img" value="<{$detail[$vo['tbf_field']]}>"><button type="button" class="btn btn-primary upload_one_img">上传图片</button>&nbsp;&nbsp;<span class="tip_msg"></span>
+                    <{elseif condition="$vo['tbf_field_type'] eq 'imagelist'" /}>
+                        
+                    <{elseif condition="$vo['tbf_field_type'] eq 'document'" /}>
+                        <input type="file" name="<{$detail[$vo['tbf_field']]}>" value="<{$detail[$vo['tbf_field']]}>">
+                    <{elseif condition="$vo['tbf_field_type'] eq 'kindeditor'" /}>
+                        <!-- KindEditor -->
+                        <script>
+                            KindEditor.ready(function(K) {
+                                var editor1_<{$vo['tbf_field']}> = K.create('textarea[name="<{$vo['tbf_field']}>"]', {
+                                    cssPath : '__static__/admin/js/kindeditor/plugins/code/prettify.css',
+                                    uploadJson : '__static__/admin/js/kindeditor/php/upload_json.php',
+                                    fileManagerJson : '__static__/admin/js/kindeditor/php/file_manager_json.php',
+                                    allowFileManager : true,
+                                    afterCreate : function() {
+                                        var self = this;
+                                        K.ctrl(document, 13, function() {
+                                            self.sync();
+                                            K('form[name=form-x]')[0].submit();
+                                        });
+                                        K.ctrl(self.edit.doc, 13, function() {
+                                            self.sync();
+                                            K('form[name=form-x]')[0].submit();
+                                        });
+                                    },
+                                    afterBlur: function() {this.sync();}
+                                });
+                                prettyPrint();
+                            });
+                        </script>
+                        <!-- /KindEditor -->
+                        <textarea id="<{$vo['tbf_field']}>" name="<{$vo['tbf_field']}>" style="width:780px;height:400px;" class="textArea"> <{$detail[$vo['tbf_field']]}> </textarea>
+                    <{/if}>
+                    
+                  <div class="tips"></div>
+                </div>
+            </div>
+        <{/volist}>
+            
+      
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button class="button bg-main icon-check-square-o tijiao" type="button"> 提交</button>
+        </div>
+      </div>
+    </form>
+<script>
+$(".upload_one_img").click(function() {
+    $(this).parent().find(".input_one_img").click();
+});
+$(".input_one_img").change(function() {
+    $(this).parent().find(".tip_msg").html('');
+    var img_str = $(this).val();
+    $(this).parent().find(".tip_msg").html(img_str);
+});
+$(".tijiao").click(function() {
+    if(confirm('确认提交？')) {
+        <{volist name="tabfield" id="vo" empty="" }>
+            <{if condition="$vo['tbf_show'] eq '1' and $vo['tbf_empty'] neq '1'"}>
+                <{if condition="$vo['tbf_field_type'] eq 'text'"}>
+                    var <{$vo['tbf_field']}> = $("input[name='<{$vo['tbf_field']}>']").val();
+                <{elseif condition="$vo['tbf_field_type'] eq 'number'" /}>
+                    var <{$vo['tbf_field']}> = $("input[name='<{$vo['tbf_field']}>']").val();
+                <{elseif condition="$vo['tbf_field_type'] eq 'radio'" /}>
+                    var <{$vo['tbf_field']}>_array=new Array();  
+                    $('input[name="<{$vo['tbf_field']}>"]').each(function(i){
+                        if(($(this).is(':checked'))) {
+                            <{$vo['tbf_field']}>_array.push($(this).val());//向数组中添加元素  
+                        }
+                    });  
+                    var <{$vo['tbf_field']}>str=<{$vo['tbf_field']}>_array.join(',');//将数组元素连接起来以构建一个字符串
+                <{elseif condition="$vo['tbf_field_type'] eq 'checkbox'" /}>
+                    var <{$vo['tbf_field']}>_array=new Array();  
+                    $('input[name="<{$vo['tbf_field']}>"]').each(function(){  
+                        if(($(this).is(':checked'))) {
+                            <{$vo['tbf_field']}>_array.push($(this).val());//向数组中添加元素  
+                        }
+                    });  
+                    var <{$vo['tbf_field']}>str=<{$vo['tbf_field']}>_array.join(',');//将数组元素连接起来以构建一个字符串  
+                    //alert(idstr);
+                <{elseif condition="$vo['tbf_field_type'] eq 'select'" /}>
+                    var <{$vo['tbf_field']}> = $("select[name='<{$vo['tbf_field']}>']").val();
+                <{elseif condition="$vo['tbf_field_type'] eq 'textarea'" /}>
+                    var <{$vo['tbf_field']}> = $("textarea[name='<{$vo['tbf_field']}>']").val();
+                <{elseif condition="$vo['tbf_field_type'] eq 'image'" /}>
+                    var <{$vo['tbf_field']}> = $("input[name='<{$vo['tbf_field']}>']").val();
+                <{elseif condition="$vo['tbf_field_type'] eq 'imagelist'" /}>
+                    
+                <{elseif condition="$vo['tbf_field_type'] eq 'document'" /}>
+                    var <{$vo['tbf_field']}> = $("input[name='<{$vo['tbf_field']}>']").val();
+                <{elseif condition="$vo['tbf_field_type'] eq 'kindeditor'" /}>
+                    var <{$vo['tbf_field']}> = $("textarea[name='<{$vo['tbf_field']}>']").val();
+                <{/if}>
+            <{/if}>
+        <{/volist}>
+        
+        var err = new Array();
+        
+        <{volist name="tabfield" id="vo" empty="" }>
+            <{if condition="$vo['tbf_show'] eq '1' and $vo['tbf_empty'] neq '1'"}>
+                <{if condition="$vo['tbf_field_type'] eq 'text'"}>
+                    if(<{$vo['tbf_field']}>.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'number'" /}>
+                    if(<{$vo['tbf_field']}>.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'radio'" /}>
+                    if(<{$vo['tbf_field']}>str.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'checkbox'" /}>
+                    if(<{$vo['tbf_field']}>str.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'select'" /}>
+                    if(<{$vo['tbf_field']}>.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'textarea'" /}>
+                    if(<{$vo['tbf_field']}>.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'image'" /}>
+                    
+                <{elseif condition="$vo['tbf_field_type'] eq 'imagelist'" /}>
+                    
+                <{elseif condition="$vo['tbf_field_type'] eq 'document'" /}>
+                    if(<{$vo['tbf_field']}>.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{elseif condition="$vo['tbf_field_type'] eq 'kindeditor'" /}>
+                    if(<{$vo['tbf_field']}>.length <= 0) {
+                        err.push('缺少<{$vo['tbf_field_name']}>');
+                    }
+                <{/if}>
+            <{/if}>
+        <{/volist}>
+        if(err.length > 0) {
+            alert(err);return;
+        }
+        $(".form-x").attr('action', "<{:url('PubAction/psave')}>");
+        $(".form-x").submit();
+    }
+});
+
+
+</script>
+  </div>
+</div>
+</body></html>
